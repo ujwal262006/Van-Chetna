@@ -1,0 +1,72 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+venv*/
+.venv/
+
+# =========================
+# Dataset / generated ML data
+# =========================
+fsc22_data/
+**/fsc22_data/
+
+features/
+**/features/
+
+features_yamnet/
+**/features_yamnet/
+
+# NumPy datasets
+*.npy
+*.npz
+
+
+
+# TensorFlow / Keras
+.keras/
+.checkpoints/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Node / React
+# =========================
+node_modules/
+.next/
+dist/
+build/
+
+# =========================
+# Environment files
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+!acoustic-ai/models/
+!acoustic-ai/models/*.keras
+!acoustic-ai/models/*.tflite
+!acoustic-ai/models/*.png
+!acoustic-ai/models/norm_mean_std.npy
