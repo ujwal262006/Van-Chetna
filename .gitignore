@@ -68,5 +68,5 @@ Thumbs.db
 # =========================
 # Model binaries (regenerate locally via training scripts, don't commit)
 # =========================
-models/*.keras
-models/*.tflite
+*.keras
+*.tflite
