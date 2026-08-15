@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Light mode defaults */
+body {
+  background: #f8fafb;
+  color: #1a2332;
+}
+
+/* Dark mode */
+.dark body {
+  background: #080b0f;
+  color: #e5e7eb;
+}
+
+::selection {
+  background: rgba(45, 122, 72, 0.2);
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
+
+.leaflet-container { background: #f0f0f0 !important; }
+.dark .leaflet-container { background: #080b0f !important; }
+
+/* Ensure map doesn't overlap modals */
+.leaflet-pane, .leaflet-control, .leaflet-top, .leaflet-bottom {
+  z-index: unset !important;
+}
+.leaflet-map-pane { z-index: 1 !important; }
+.leaflet-tile-pane { z-index: 1 !important; }
+.leaflet-overlay-pane { z-index: 2 !important; }
+.leaflet-marker-pane { z-index: 3 !important; }
+.leaflet-tooltip-pane { z-index: 4 !important; }
+.leaflet-popup-pane { z-index: 5 !important; }
+.leaflet-control { z-index: 6 !important; }
+
+.animate-slide-in { animation: slideIn 0.25s ease-out; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+*:focus-visible {
+  outline: 2px solid rgba(45, 122, 72, 0.5);
+  outline-offset: 2px;
+}
