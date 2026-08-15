@@ -65,8 +65,8 @@ Thumbs.db
 .vscode/
 .idea/
 
-!acoustic-ai/models/
-!acoustic-ai/models/*.keras
-!acoustic-ai/models/*.tflite
-!acoustic-ai/models/*.png
-!acoustic-ai/models/norm_mean_std.npy
+# =========================
+# Model binaries (regenerate locally via training scripts, don't commit)
+# =========================
+models/*.keras
+models/*.tflite
