@@ -57,8 +57,8 @@ MODEL_PATH = "models/best_model_yamnet.keras"
 YAMNET_URL = "https://tfhub.dev/google/yamnet/1"
 
 NODE_ID = "NODE_01"
-NODE_LAT = 30.4520   # set to your actual demo location
-NODE_LON = 77.5890
+NODE_LAT = 28.51975   # college venue coordinates
+NODE_LON = 77.36538
 
 
 def load_classes():

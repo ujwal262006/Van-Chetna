@@ -13,9 +13,9 @@ import httpx
 API_URL = "http://localhost:8000"
 
 NODES = [
-    {"node_id": "NODE_01", "sensor_type": "acoustic", "lat": 21.1458, "lon": 79.0882, "battery_pct": 78},
-    {"node_id": "NODE_02", "sensor_type": "acoustic", "lat": 21.1502, "lon": 79.0925, "battery_pct": 91},
-    {"node_id": "NODE_04", "sensor_type": "vision", "lat": 21.1480, "lon": 79.0960, "battery_pct": 64},
+    {"node_id": "NODE_01", "sensor_type": "acoustic", "lat": 28.51975, "lon": 77.36538, "battery_pct": 78},
+    {"node_id": "NODE_02", "sensor_type": "acoustic", "lat": 28.52012, "lon": 77.36601, "battery_pct": 91},
+    {"node_id": "NODE_04", "sensor_type": "vision",   "lat": 28.51940, "lon": 77.36475, "battery_pct": 64},
 ]
 
 ACOUSTIC_CLASSES = ["chainsaw", "vehicle", "human_activity", "animal", "normal"]
