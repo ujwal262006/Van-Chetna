@@ -70,3 +70,16 @@ Thumbs.db
 # =========================
 *.keras
 *.tflite
+
+# =========================
+# Generated plots / EDA figures (regenerate via scripts 01/04/06)
+# =========================
+*.png
+*.jpg
+*.jpeg
+
+# =========================
+# Generated / test audio
+# =========================
+*.wav
+test_stream.wav
