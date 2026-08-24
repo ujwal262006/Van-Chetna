@@ -1,8 +1,25 @@
+// =====================================================================
+// NODE A — INMP441 mic bring-up test (ESP32)
+// =====================================================================
+// Minimal I2S read test to confirm the mic is wired correctly before
+// running the full node_main.ino pipeline. Prints raw sample values;
+// tap/speak near the mic and watch the numbers move.
+//
+// INMP441 mic wiring (matches node_main.ino):
+//   INMP441 ->  ESP32
+//   VDD     ->  3V3
+//   GND     ->  GND
+//   SCK     ->  D27   (I2S bit clock)
+//   WS      ->  D25   (I2S word select)
+//   SD      ->  D32   (I2S serial data in)
+//   L/R     ->  GND   (selects LEFT channel)
+// =====================================================================
+
 #include <driver/i2s.h>
 
-#define I2S_WS   25
-#define I2S_SD   22
-#define I2S_SCK  26
+#define I2S_SCK  27   // D27  bit clock
+#define I2S_WS   25   // D25  word select
+#define I2S_SD   32   // D32  serial data in
 #define I2S_PORT I2S_NUM_0
 
 void setup() {
