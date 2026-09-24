@@ -83,3 +83,18 @@ Thumbs.db
 # =========================
 *.wav
 test_stream.wav
+
+# =========================
+# Database files (runtime data, never commit)
+# =========================
+*.db
+*.db-shm
+*.db-wal
+
+# =========================
+# Office / binary documents (large files, managed outside git)
+# =========================
+*.docx
+*.xlsx
+*.pptx
+*.pdf

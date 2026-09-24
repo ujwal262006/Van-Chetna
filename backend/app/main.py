@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import CORS_ORIGINS
 from app.database import init_db
-from app.routes import events, alerts, nodes, websocket, health
+from app.routes import events, alerts, nodes, websocket, health, hazard_events
 
 
 @asynccontextmanager
@@ -40,5 +40,6 @@ app.add_middleware(
 app.include_router(events.router, tags=["Events"])
 app.include_router(alerts.router, tags=["Alerts"])
 app.include_router(nodes.router, tags=["Nodes"])
+app.include_router(hazard_events.router, tags=["Hazard Events"])
 app.include_router(websocket.router, tags=["WebSocket"])
 app.include_router(health.router, tags=["Health"])

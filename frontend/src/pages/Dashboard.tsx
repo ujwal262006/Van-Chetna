@@ -5,17 +5,22 @@ import ThreatMap from '../components/map/ThreatMap';
 import AlertFeed from '../components/alerts/AlertFeed';
 import AlertDetail from '../components/alerts/AlertDetail';
 import NodeHealthPanel from '../components/nodes/NodeHealthPanel';
+import MultiNodeStatusPanel from '../components/nodes/MultiNodeStatusPanel';
 import StatCard from '../components/ui/StatCard';
 import NotificationToast from '../components/ui/NotificationToast';
 import { Alert } from '../types';
 import { useAlerts } from '../hooks/useAlerts';
 import { useNodes } from '../hooks/useNodes';
+import { useNodesSummary } from '../hooks/useNodesSummary';
 import { useEvents } from '../hooks/useEvents';
 import { useLiveAlerts } from '../hooks/useLiveAlerts';
 
 export default function Dashboard() {
   const { alerts, loading: alertsLoading, pushAlert, acknowledge } = useAlerts();
-  const { nodes, loading: nodesLoading, onlineCount, offlineCount } = useNodes();
+  // useNodes: existing hook, used by NodeHealthPanel (unchanged)
+  const { nodes: legacyNodes, loading: nodesLoading, onlineCount, offlineCount } = useNodes();
+  // useNodesSummary: new hook — includes hazard nodes + latest readings for map
+  const { nodes: allNodes } = useNodesSummary();
   const { events } = useEvents();
   const [selected, setSelected] = useState<Alert | null>(null);
   const [toast, setToast] = useState<Alert | null>(null);
@@ -38,28 +43,41 @@ export default function Dashboard() {
   const criticalCount = alerts.filter(a => a.severity === 'critical' && !a.acknowledged).length;
   const mediumCount = alerts.filter(a => a.severity === 'medium' && !a.acknowledged).length;
 
+  // KPI: total online/offline includes hazard nodes from allNodes if available
+  const displayOnline = allNodes.length > 0
+    ? allNodes.filter(n => n.status === 'online').length
+    : onlineCount;
+  const displayOffline = allNodes.length > 0
+    ? allNodes.filter(n => n.status === 'offline').length
+    : offlineCount;
+
+  // Pass allNodes to the map (includes lat/lon + hazard data); fall back to legacyNodes
+  const mapNodes = allNodes.length > 0 ? allNodes : legacyNodes;
+
   return (
     <DashboardLayout title="Dashboard" connectionState={connectionState} alertCount={criticalCount + mediumCount}>
       {/* KPI */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
         <StatCard label="Critical Alerts" value={criticalCount} icon={AlertTriangle} color="text-red-400" />
         <StatCard label="Medium Alerts" value={mediumCount} icon={AlertCircle} color="text-amber-400" />
-        <StatCard label="Online Nodes" value={onlineCount} icon={Radio} color="text-emerald-400" />
-        <StatCard label="Offline Nodes" value={offlineCount} icon={RadioTower} color="text-gray-500" />
+        <StatCard label="Online Nodes" value={displayOnline} icon={Radio} color="text-emerald-400" />
+        <StatCard label="Offline Nodes" value={displayOffline} icon={RadioTower} color="text-gray-500" />
         <StatCard label="Events Today" value={events.length} icon={Activity} color="text-blue-400" />
       </div>
 
       {/* Main grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <div className="xl:col-span-2 space-y-4">
-          <ThreatMap nodes={nodes} alerts={alerts} onAlertClick={setSelected} />
+          <ThreatMap nodes={mapNodes} alerts={alerts} onAlertClick={setSelected} />
+          {/* Hazard node status cards + sparklines (new) */}
+          <MultiNodeStatusPanel nodes={mapNodes} />
           <div className="bg-white dark:bg-[#0f1419] border border-gray-200 dark:border-white/5 rounded-lg p-4">
             <h3 className="text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-3">Active Alerts</h3>
             <AlertFeed alerts={alerts} loading={alertsLoading} onAlertClick={setSelected} recentIds={recentIds} />
           </div>
         </div>
         <div>
-          <NodeHealthPanel nodes={nodes} loading={nodesLoading} />
+          <NodeHealthPanel nodes={legacyNodes} loading={nodesLoading} />
         </div>
       </div>
 

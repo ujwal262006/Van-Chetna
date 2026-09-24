@@ -5,9 +5,10 @@ POST /alerts/{id}/acknowledge — Officer acknowledges an alert.
 """
 
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
 
 from app.database import get_db
 from app.models import Alert, Threat
@@ -18,20 +19,30 @@ router = APIRouter()
 
 @router.get("/alerts", response_model=list[AlertOut])
 async def get_alerts(
-    limit: int = 50,
+    limit: int = 100,
     offset: int = 0,
+    node_id: Optional[str] = Query(default=None, description="Filter by node ID"),
+    severity: Optional[str] = Query(default=None, description="Filter by severity: critical|medium|low"),
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Returns alerts joined with their threats, in the flat shape frontend expects.
+    Returns alerts joined with their threats, newest first.
+    Optional filters: node_id, severity.
+    Default limit raised to 100 so hazard alerts aren't hidden behind
+    a wall of acoustic alerts.
     """
-    result = await db.execute(
+    q = (
         select(Alert, Threat)
         .join(Threat, Alert.threat_id == Threat.id)
         .order_by(Threat.created_at.desc())
-        .limit(limit)
-        .offset(offset)
     )
+    if node_id:
+        q = q.where(Threat.node_id == node_id)
+    if severity:
+        q = q.where(Threat.severity == severity.lower())
+    q = q.limit(limit).offset(offset)
+
+    result = await db.execute(q)
     rows = result.all()
 
     alerts_out = []

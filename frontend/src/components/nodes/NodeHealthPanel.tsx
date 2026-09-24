@@ -1,5 +1,5 @@
 import { Radio } from 'lucide-react';
-import { NodeStatus } from '../../types';
+import { NodeStatus, NODE_TYPE_LABELS } from '../../types';
 import BatteryIndicator from '../ui/BatteryIndicator';
 import LoadingState from '../ui/LoadingState';
 
@@ -14,6 +14,14 @@ function timeAgo(iso: string) {
   if (s < 3600) return `${Math.floor(s / 60)}m ago`;
   return `${Math.floor(s / 3600)}h ago`;
 }
+
+const NODE_TYPE_ICON: Record<string, string> = {
+  acoustic:    '🎙',
+  vision:      '📷',
+  fire:        '🔥',
+  air_quality: '🏭',
+  water_level: '🌊',
+};
 
 export default function NodeHealthPanel({ nodes, loading }: Props) {
   if (loading) return <LoadingState message="Loading nodes..." />;
@@ -30,12 +38,15 @@ export default function NodeHealthPanel({ nodes, loading }: Props) {
             <div className={`w-2 h-2 rounded-full shrink-0 ${node.status === 'online' ? 'bg-emerald-500' : 'bg-gray-400 dark:bg-gray-600'}`} />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <Radio size={12} className="text-gray-400" />
+                <span className="text-[11px]">{NODE_TYPE_ICON[node.node_type] ?? <Radio size={12} className="text-gray-400" />}</span>
                 <span className="font-mono text-sm text-gray-800 dark:text-gray-200 font-medium">{node.node_id}</span>
                 <span className={`text-[9px] uppercase font-bold ${node.status === 'online' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500'}`}>{node.status}</span>
               </div>
-              <div className="flex items-center gap-4 mt-1">
-                <BatteryIndicator pct={node.battery_pct} />
+              <div className="flex items-center gap-4 mt-0.5">
+                <span className="text-[9px] text-gray-500">{NODE_TYPE_LABELS[node.node_type] ?? node.node_type}</span>
+              </div>
+              <div className="flex items-center gap-4 mt-0.5">
+                {node.battery_pct > 0 && <BatteryIndicator pct={node.battery_pct} />}
                 <span className="font-mono text-[10px] text-gray-500">{timeAgo(node.last_seen)}</span>
               </div>
             </div>

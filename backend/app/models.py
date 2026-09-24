@@ -9,7 +9,10 @@ class Node(Base):
     __tablename__ = "nodes"
 
     node_id: Mapped[str] = mapped_column(String, primary_key=True)
-    node_type: Mapped[str] = mapped_column(String, default="acoustic")  # 'acoustic' | 'vision'
+    # Extended to include multi-node types:
+    # 'acoustic' | 'vision' (existing)
+    # 'fire' | 'air_quality' | 'water_level' (new hazard nodes)
+    node_type: Mapped[str] = mapped_column(String, default="acoustic")
     lat: Mapped[float] = mapped_column(Float)
     lon: Mapped[float] = mapped_column(Float)
     last_seen: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
@@ -72,3 +75,32 @@ class Alert(Base):
     acknowledged_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     threat: Mapped["Threat"] = relationship(back_populates="alert")
+
+
+class HazardEvent(Base):
+    """
+    Stores VCN1-protocol readings from the new hazard nodes (fire/smoke,
+    air quality, water level) received via the Gateway serial bridge.
+
+    Sensor-specific float fields use a generic naming scheme (sensor_value_1..3)
+    so the table stays flat without per-hazard-type columns.  The mapping is:
+      AIR_QUALITY  : sensor_value_1 = raw ADC value
+      WATER_LEVEL  : sensor_value_1 = water_level_cm, sensor_value_2 = rise_rate_cm_per_min
+      FIRE         : sensor_value_1 = smoke_raw ADC, sensor_value_2 = temp_c,
+                     sensor_value_3 = humidity_pct
+    """
+    __tablename__ = "hazard_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    event_id: Mapped[str] = mapped_column(String, unique=True, index=True)
+    node_id: Mapped[str] = mapped_column(String, ForeignKey("nodes.node_id"))
+    hazard_type: Mapped[str] = mapped_column(String)   # 'FIRE' | 'AIR_QUALITY' | 'WATER_LEVEL'
+    risk_score: Mapped[int] = mapped_column(Integer)   # 0–100 from firmware
+    severity: Mapped[str] = mapped_column(String)      # 'normal'|'watch'|'warning'|'critical'
+    confidence: Mapped[int] = mapped_column(Integer)   # 0–100 from firmware
+    sensor_value_1: Mapped[float | None] = mapped_column(Float, nullable=True)
+    sensor_value_2: Mapped[float | None] = mapped_column(Float, nullable=True)
+    sensor_value_3: Mapped[float | None] = mapped_column(Float, nullable=True)
+    rssi: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    snr: Mapped[float | None] = mapped_column(Float, nullable=True)
+    recorded_at: Mapped[datetime] = mapped_column(DateTime)
