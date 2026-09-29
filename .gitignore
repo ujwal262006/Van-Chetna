@@ -98,3 +98,13 @@ test_stream.wav
 *.xlsx
 *.pptx
 *.pdf
+
+# =========================
+# Demo / recording helpers (local use only, not part of the project)
+# =========================
+DEMO_SCRIPT.txt
+backend/simulate_demo.py
+run_demo_sim.bat
+check_demo_syntax.bat
+check_for01.bat
+inject_human.bat
